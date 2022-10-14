@@ -66,6 +66,8 @@ Shader "FeGameArt/Tutorial/ExampleShader"
             float4 _TextureParams;
             float4 _ColorToMultiply;
 
+            float4 _GlobalColor;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -73,7 +75,9 @@ Shader "FeGameArt/Tutorial/ExampleShader"
                 o.vertex = UnityObjectToClipPos(v.vertex);
 
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                o.uv += float2(_Time.y * _TextureParams.x, _Time.y * _TextureParams.y);
+
+                o.uv += float2(_Time.y * _TextureParams.x, 
+                    _Time.y * _TextureParams.y);
 
                 return o;
             }
@@ -82,8 +86,9 @@ Shader "FeGameArt/Tutorial/ExampleShader"
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
             
-                //Lerp between mapped color to black based on _TextureParams.z
-                col.rgb = lerp(col.rgb, float3(0, 0, 0), saturate(1 - _TextureParams.z));
+                //Lerp between mapped color to black 
+                //based on _TextureParams.z
+                col.rgb = lerp(col.rgb, float3(0, 0, 0), 1 - _TextureParams.z);
                 //Set the alpha channel 
                 col.a = saturate(_TextureParams.w);
 
@@ -91,6 +96,7 @@ Shader "FeGameArt/Tutorial/ExampleShader"
                 //MultiplyColorRef(col, _ColorToMultiply);
                 col = MultiplyColor(col, _ColorToMultiply);
 #endif
+                col *= _GlobalColor;
 
                 return col;
             }
